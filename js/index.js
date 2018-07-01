@@ -1,23 +1,23 @@
 
 var idbPromis = window.indexedDB.open("currencies", 1);
 
-idbPromis.onerror = function(event) {
+idbPromis.onerror = ()=> {
   console.log("fatal error");
 };
 
-idbPromis.onsuccess = function(event) {
+idbPromis.onsuccess = () =>{
   console.log("successfully created database");
 };
 
-idbPromis.onupgradeneeded = function(event){
+idbPromis.onupgradeneeded = () =>{
   var upgradeDb = event.target.result;
     var store = upgradeDb.createObjectStore('currency',{
          keyPath: "query" 
       });
-    store.transaction.oncomplete = function(event){
-      var currencyObjectStore = upgradeDb.transaction("currency", "readwrite").objectStore('currency');
-      currencyObjectStore.add({query:"CFA_UTC", rate: 0.234});
-    }
+      // store.transaction.oncomplete = ()=> {
+      // var currencyObjectStore = upgradeDb.transaction("currency", "readwrite").objectStore('currency');
+      // currencyObjectStore.add({query:"CFA_UTC", rate: 0.234});
+        // }
 }
 if(!navigator.serviceWorker){
 
@@ -112,7 +112,20 @@ submitForm = () => {
             fetch(url).then(response=>response.json()).then((data) => {
               result.val( data[query].val * money);
               console.log(data[query].val);
-            })
 
+              // var transaction = idbPromis.transaction("currency", "readwrite");
 
+              // var store = transaction.objectStore("currency");
+               var db = idbPromis.result;
+
+                var store = db.transaction("currency", "readwrite").objectStore("currency");
+
+                 request = store.add({query:query, rate: data[query].val});
+                  request.onsuccess = function(event) {
+                    console.log("successfully added new record to the dbase");
+                   };
+                   request.onerror = function(event) {
+                    console.log("could not add new records to db");
+                   }
+            });
 }
