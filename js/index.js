@@ -107,22 +107,11 @@ submitForm = () => {
             console.log(From+"_ "+To);
 
 
-
-            // // Add some data
-            // store.put({id: 12345, name: {first: "John", last: "Doe"}, age: 42});
-            // store.put({id: 67890, name: {first: "Bob", last: "Smith"}, age: 35});
-            
+        
             let url = `https://free.currencyconverterapi.com/api/v5/convert?q=${query}&compact=y`;
             fetch(url).then(response=>response.json()).then((data) => {
               result.val( data[query].val * money);
               console.log(data[query].val);
-              idbPromis.onsuccess = () => {
-    // Start a new transaction
-            var db = idbPromis.result;
-            var tx = db.transaction("currency", "readwrite");
-            var store = tx.objectStore("currency");
-            store.add({query:query, rate: data[query].val});
-
             })
 
 
